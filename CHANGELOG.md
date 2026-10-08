@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- Docs only: PyPI one-liner as the primary install path (same code as 0.4.0).
+
 ## 0.4.0
 
 - New tools: `cashflow_timeline` (income/expenses/net per period),
