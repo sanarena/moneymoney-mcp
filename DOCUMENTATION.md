@@ -63,32 +63,37 @@ tests/           pytest suite (mocked) + lua_harness.lua
 
 ## 3. Installation
 
+**Option A — PyPI one-liner (recommended).** Needs
+[`uv`](https://docs.astral.sh/uv/) (`brew install uv`); `uvx` fetches its
+own Python, so any macOS works:
+
+```jsonc
+// Claude Desktop (claude_desktop_config.json), Cursor (mcp.json), etc.
+{ "mcpServers": { "moneymoney": {
+  "command": "uvx",
+  "args": ["moneymoney-mcp"] } } }
+```
+
+```toml
+# Codex (~/.codex/config.toml)
+[mcp_servers.moneymoney]
+command = "uvx"
+args = ["moneymoney-mcp"]
+```
+
+`pipx run moneymoney-mcp` is equivalent; `pip install moneymoney-mcp`
+(with command `moneymoney-mcp`) works for plain pip users. Package page:
+[`moneymoney-mcp` on PyPI](https://pypi.org/p/moneymoney-mcp).
+
+**Option B — clone, zero dependencies.** No `uv`, no `pip`, no build —
+stock macOS `/usr/bin/python3` (3.9+) runs it directly:
+
 ```sh
 git clone https://github.com/sanarena/moneymoney-mcp
 ```
 
-No `pip install`, no venv, no build. Point the client at `server.py`:
-
-**Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json`):
-
-```jsonc
-{ "mcpServers": { "moneymoney": {
-  "command": "/usr/bin/python3",
-  "args": ["/absolute/path/to/moneymoney-mcp/src/moneymoney_mcp/server.py"] } } }
-```
-
-**Codex** (`~/.codex/config.toml`):
-
-```toml
-[mcp_servers.moneymoney]
-command = "/usr/bin/python3"
-args = ["/absolute/path/to/moneymoney-mcp/src/moneymoney_mcp/server.py"]
-enabled = true
-```
-
-**Cursor** (`~/.cursor/mcp.json`): same `command`/`args` under `"mcpServers"`.
-
-**Any other client**: stdio server, same command + args.
+then use command `/usr/bin/python3` with args
+`["/absolute/path/to/moneymoney-mcp/src/moneymoney_mcp/server.py"]`.
 
 Optional environment (set in the client's `env` map):
 
@@ -96,10 +101,6 @@ Optional environment (set in the client's `env` map):
 |---|---|
 | `MONEYMONEY_MASK_IDS=1` | Mask IBANs/account numbers by default (per-call `mask_ids: false` reveals) |
 | `MONEYMONEY_STATEMENTS_DIR=…` | Override the statements folder location |
-
-Python users may alternatively `pip install .` and use the `moneymoney-mcp`
-console script as the command. The package is also on PyPI as
-[`moneymoney-mcp`](https://pypi.org/p/moneymoney-mcp) (`uvx moneymoney-mcp`).
 
 ## 4. Tool reference
 

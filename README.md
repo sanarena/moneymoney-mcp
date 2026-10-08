@@ -22,29 +22,38 @@ and speaks to MoneyMoney through its official AppleScript API.
 
 ## Install (2 minutes)
 
+**Option A — one line, no clone (recommended).** Needs
+[`uv`](https://docs.astral.sh/uv/) (`brew install uv`):
+
+Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```jsonc
+{ "mcpServers": { "moneymoney": {
+  "command": "uvx",
+  "args": ["moneymoney-mcp"] } } }
+```
+
+Codex (`~/.codex/config.toml`):
+
+```toml
+[mcp_servers.moneymoney]
+command = "uvx"
+args = ["moneymoney-mcp"]
+```
+
+Any other client: same idea — a stdio server with command `uvx` and args
+`["moneymoney-mcp"]`. (`pipx run moneymoney-mcp` or `pip install
+moneymoney-mcp` + command `moneymoney-mcp` work too.)
+
+**Option B — clone, zero dependencies.** No `uv`, no `pip`, stock macOS
+Python is enough:
+
 ```sh
 git clone https://github.com/sanarena/moneymoney-mcp
 ```
 
-**Claude Desktop** — add to
-`~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```jsonc
-{ "mcpServers": { "moneymoney": {
-  "command": "/usr/bin/python3",
-  "args": ["/absolute/path/to/moneymoney-mcp/src/moneymoney_mcp/server.py"] } } }
-```
-
-**Codex** — append to `~/.codex/config.toml`:
-
-```toml
-[mcp_servers.moneymoney]
-command = "/usr/bin/python3"
-args = ["/absolute/path/to/moneymoney-mcp/src/moneymoney_mcp/server.py"]
-```
-
-**Any other client** — same idea: a stdio server whose command is
-`/usr/bin/python3` and whose argument is the `server.py` path above.
+then use command `/usr/bin/python3` with args
+`["/absolute/path/to/moneymoney-mcp/src/moneymoney_mcp/server.py"]`.
 
 Then restart the AI client. If MoneyMoney's database is locked you'll get
 a clear `database is locked` message — unlock the app and ask again.
