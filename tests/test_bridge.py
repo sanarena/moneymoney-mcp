@@ -121,8 +121,34 @@ def test_run_applescript_timeout(monkeypatch):
         raise subprocess.TimeoutExpired(cmd="osascript", timeout=1)
 
     monkeypatch.setattr(bridge.subprocess, "run", fake_run)
-    with pytest.raises(bridge.MoneyMoneyError, match="did not answer"):
+    with pytest.raises(bridge.MoneyMoneyError, match="did not answer") as excinfo:
         bridge.run_applescript("export accounts", timeout=1)
+    # The message must name the likely causes, not just ask if the app runs.
+    assert "busy" in str(excinfo.value)
+
+
+def test_timeouts_fail_fast_by_default():
+    # Regression guard: hangs must surface in seconds, not minutes.
+    assert bridge.DEFAULT_TIMEOUT <= 30
+    assert bridge.BULK_TIMEOUT <= 60
+
+
+def test_bulk_exports_use_bulk_timeout(monkeypatch):
+    seen = {}
+    monkeypatch.setattr(
+        bridge, "_export_plist", lambda cmd, timeout: seen.setdefault(cmd, timeout)
+    )
+    bridge.export_accounts()
+    bridge.export_categories()
+    bridge.export_transactions("2026-01-01")
+    bridge.export_portfolio()
+    assert seen["export accounts"] == bridge.DEFAULT_TIMEOUT
+    assert seen["export categories"] == bridge.DEFAULT_TIMEOUT
+    assert 'export transactions from date "2026-01-01" as "plist"' in seen
+    assert seen['export transactions from date "2026-01-01" as "plist"'] == (
+        bridge.BULK_TIMEOUT
+    )
+    assert seen['export portfolio as "plist"'] == bridge.BULK_TIMEOUT
 
 
 def test_export_plist_parses_and_converts_dates(monkeypatch):

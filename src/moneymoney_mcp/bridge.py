@@ -17,7 +17,11 @@ from datetime import date, datetime, time
 from typing import Any
 
 APP_NAME = "MoneyMoney"
-DEFAULT_TIMEOUT = 120
+# Fail fast when the app doesn't answer: healthy exports take well under a
+# second, so a hang means MoneyMoney is busy, blocked, or gone — not slow.
+DEFAULT_TIMEOUT = 30
+# Bulk exports (transactions, portfolio) get extra headroom for huge ranges.
+BULK_TIMEOUT = 60
 
 
 class MoneyMoneyError(Exception):
@@ -62,7 +66,9 @@ def run_applescript(command: str, timeout: float = DEFAULT_TIMEOUT) -> str:
         )
     except subprocess.TimeoutExpired:
         raise MoneyMoneyError(
-            f"MoneyMoney did not answer within {timeout:g}s. Is the app running?"
+            f"MoneyMoney did not answer within {timeout:g}s. It may be busy "
+            "(bank sync), blocked by an open dialog, or not running — "
+            "check the app and retry."
         ) from None
     if proc.returncode != 0:
         err = (proc.stderr or proc.stdout).strip()
@@ -120,7 +126,7 @@ def export_transactions(
     to_date: str | None = None,
     account: str | None = None,
     category: str | None = None,
-    timeout: float = DEFAULT_TIMEOUT,
+    timeout: float = BULK_TIMEOUT,
 ) -> Any:
     """Export transactions, optionally filtered. Returns {"creator", "transactions"}.
 
@@ -144,7 +150,7 @@ def export_transactions(
 
 def export_portfolio(
     account: str | None = None,
-    timeout: float = DEFAULT_TIMEOUT,
+    timeout: float = BULK_TIMEOUT,
 ) -> Any:
     """Export securities holdings, optionally for one account. Returns {"creator", "portfolio"}."""
     parts = ["export portfolio"]

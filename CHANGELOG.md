@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+
+- Fail fast when MoneyMoney doesn't answer AppleScript: 30s default timeout
+  (was 120s), 60s for bulk transaction/portfolio exports, and a timeout
+  message that names the likely causes (busy sync, open dialog, not running).
+
 ## 0.4.1
 
 - Docs only: PyPI one-liner as the primary install path (same code as 0.4.0).
