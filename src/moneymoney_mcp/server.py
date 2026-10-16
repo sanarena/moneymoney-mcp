@@ -25,7 +25,7 @@ if __package__ in (None, ""):
 from moneymoney_mcp import analytics, bridge, fx, privacy, statements  # noqa: E402
 
 SERVER_NAME = "moneymoney"
-SERVER_VERSION = "0.4.1"
+SERVER_VERSION = "0.4.2"
 
 DEFAULT_RANGE_DAYS = 90
 DEFAULT_LIMIT = 200

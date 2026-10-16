@@ -5,6 +5,9 @@
 - Fail fast when MoneyMoney doesn't answer AppleScript: 30s default timeout
   (was 120s), 60s for bulk transaction/portfolio exports, and a timeout
   message that names the likely causes (busy sync, open dialog, not running).
+- Docs: "Install with AI" prompt that lets an AI assistant install, test and
+  register the server; the manual clone install now prints the full path.
+- `initialize` now reports server version 0.4.2 (was still 0.4.1).
 
 ## 0.4.1
 
